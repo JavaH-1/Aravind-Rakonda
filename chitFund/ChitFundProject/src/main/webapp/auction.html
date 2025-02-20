@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Auction</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background-color: rgba(0, 0, 0, 0.8);
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #FFD700;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        /* Sidebar Navigation */
+        .menu-bar {
+            background-color: rgba(0, 0, 0, 0.8);
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .menu-bar a {
+            color: #ffffff;
+            margin: 15px 0;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .menu-bar a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+            transform: scale(1.1);
+        }
+
+        /* Auction Form Styling */
+        .container {
+            margin-top: 80px; /* To accommodate top banner */
+        }
+
+        .card {
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-left: 270px; /* To avoid overlapping with the sidebar */
+            max-width: 800px;
+        }
+
+        .card-header {
+            background-color: #4f5d52;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background-color: #4f5d52;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #3b4a3c;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .card-footer {
+            text-align: center;
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .form-control:focus {
+            border-color: #4f5d52;
+            box-shadow: 0 0 5px rgba(79, 93, 82, 0.5);
+        }
+
+        /* Hover effect for the submit button */
+        .btn-primary:hover {
+            transform: translateY(-3px);
+        }
+        .btn-danger:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+    <script>
+    $(document).ready(function () {
+        // Fetch Groups
+        $.ajax({
+            url: "GroupListServlet",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#groupSelect").empty().append('<option value="">-- Select Group --</option>');
+                $.each(data, function (index, group) {
+                    $("#groupSelect").append('<option value="' + group.id + '">' + group.name + '</option>');
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching groups:", error);
+                alert("Failed to load groups. Please try again.");
+            }
+        });
+
+        // Fetch members when a group is selected
+        $("#groupSelect").change(function () {
+            var groupId = $(this).val();
+
+            if (groupId) {
+                $.ajax({
+                    url: "MemberListServlet",
+                    type: "GET",
+                    data: { groupId: groupId },  // Pass groupId as a parameter
+                    dataType: "json",
+                    success: function (data) {
+                        $("#memberSelect").empty().append('<option value="">-- Select Member --</option>');
+                        $.each(data, function (index, member) {
+                            $("#memberSelect").append('<option value="' + member.member_id + '">' + member.name + '</option>');
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching members:", error);
+                        alert("Failed to load members. Please try again.");
+                    }
+                });
+            } else {
+                $("#memberSelect").empty().append('<option value="">-- Select Member --</option>');
+            }
+        });
+
+        // Handle Auction form submission
+        $("#auctionForm").submit(function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: "AuctionServlet",
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: "json",  
+                success: function (response) {
+                    if (response.status === "success") {
+                        alert("Auction created successfully!");
+                        $("#auctionForm")[0].reset();
+                    } else {
+                        alert("Failed to create auction: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error creating auction: " + error);
+                }
+            });
+        });
+    });
+    </script>
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Premier ChitFund Management System
+    </div>
+    
+    <!-- Sidebar Menu -->
+    <div class="menu-bar">
+        <a href="createGroup.html">Create Chit Group</a>
+        <a href="registerMember.html">Register Member</a>
+        <a href="auction.html">Auction Menu</a>
+        <a href="groupDetails.jsp">Available Chit Plans</a>
+        <a href="onGoingChitPlans.html">On Going Chit Plans</a>
+        <a href="whyUs.html">Why Us?</a>
+        <a href="contactUs.html">Contact Us</a>
+        <a href="logout.jsp">Logout</a>
+    </div>
+
+    <!-- Auction Form Container -->
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Create Auction
+            </div>
+            <form id="auctionForm">
+                <div class="card-body">
+                    <!-- Group Dropdown -->
+                    <div class="form-group">
+                        <label for="groupSelect">Select Group:</label>
+                        <select id="groupSelect" name="groupId" class="form-control" required>
+                            <option value="">Loading groups...</option>
+                        </select>
+                    </div>
+
+                    <!-- Month Dropdown -->
+                    <div class="form-group">
+                        <label for="month">Select Month:</label>
+                        <select id="month" name="month" class="form-control" required>
+                            <option value="">-- Select Month --</option>
+                            <option value="1">1st Month</option>
+                            <option value="2">2nd Month</option>
+                            <option value="3">3rd Month</option>
+                            <!-- Add more months as needed -->
+                        </select>
+                    </div>
+
+                    <!-- Auction Amount -->
+                    <div class="form-group">
+                        <label for="auctionAmount">Auction Amount:</label>
+                        <input type="number" name="auctionAmount" id="auctionAmount" class="form-control" required />
+                    </div>
+
+                    <!-- Member Dropdown -->
+                    <div class="form-group">
+                        <label for="memberSelect">Select Member:</label>
+                        <select id="memberSelect" name="memberId" class="form-control" required>
+                            <option value="">Loading members...</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Submit Button -->
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Create Auction</button>
+                </div>
+            </form>
+
+            <!-- Back to Home Button -->
+            <div class="card-footer mt-3">
+                <a href="Dashboard.html" class="btn btn-danger">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
