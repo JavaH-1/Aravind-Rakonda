@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Data</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS for card animation -->
+    <style>
+        .card {
+            transition: transform 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        #carData {
+            margin-top: 20px;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+        }
+    </style>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <div class="container my-5">
+        <!-- Form Section -->
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <h2 class="text-center mb-4">Insert Car Data</h2>
+                <form id="carForm" class="bg-white p-4 rounded shadow-sm">
+                    <div class="form-group">
+                        <label for="Model">Model:</label>
+                        <input type="text" class="form-control" id="Model" name="Model" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Year">Year:</label>
+                        <input type="number" class="form-control" id="Year" name="Year" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Price">Price:</label>
+                        <input type="number" class="form-control" id="Price" name="Price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Color">Color:</label>
+                        <input type="text" class="form-control" id="Color" name="Color" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="EngineType">Engine Type:</label>
+                        <input type="text" class="form-control" id="EngineType" name="EngineType" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Get Data Section -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-8 col-lg-6">
+                <h2 class="text-center mb-4">Get All Car Data</h2>
+                <button id="getDataBtn" class="btn btn-info btn-block">Get Data</button>
+            </div>
+        </div>
+
+        <!-- Display Car Data -->
+        <div id="carData" class="row justify-content-center"></div>
+    </div>
+
+    <script>
+        // Submit form data as JSON to the Servlet
+        $("#carForm").submit(function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var carData = {
+                Model: $("#Model").val(),
+                Year: $("#Year").val(),
+                Price: $("#Price").val(),
+                Color: $("#Color").val(),
+                EngineType: $("#EngineType").val()
+            };
+
+            $.ajax({
+                url: '/CarMavenProject/CarDataServlet',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(carData),
+                success: function (response) {
+                    alert(response.message);
+                },
+                error: function (xhr, status, error) {
+                    alert("Error: " + error);
+                }
+            });
+        });
+
+        // Get car data from the Servlet
+        $("#getDataBtn").click(function () {
+            $.ajax({
+                url: '/CarMavenProject/CarDataServlet',
+                type: 'GET',
+                success: function (response) {
+                    var html = "";
+                    for (var i = 0; i < response.length; i++) {
+                        html += "<div class='col-md-4 col-lg-3 mb-4'>" +
+                                    "<div class='card'>" +
+                                        "<div class='card-body'>" +
+                                            "<h5 class='card-title'>" + response[i].Model + "</h5>" +
+                                            "<p class='card-text'><strong>Year:</strong> " + response[i].Year + "</p>" +
+                                            "<p class='card-text'><strong>Price:</strong> $" + response[i].Price + "</p>" +
+                                            "<p class='card-text'><strong>Color:</strong> " + response[i].Color + "</p>" +
+                                            "<p class='card-text'><strong>Engine Type:</strong> " + response[i].EngineType + "</p>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "</div>";
+                    }
+                    $("#carData").html(html);
+                },
+                error: function (xhr, status, error) {
+                    alert("Error: " + error);
+                }
+            });
+        });
+    </script>
+
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
