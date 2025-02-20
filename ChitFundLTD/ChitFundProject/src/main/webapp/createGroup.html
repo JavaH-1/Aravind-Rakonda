@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Group</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            box-sizing: border-box;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background-color: rgba(0, 0, 0, 0.8);
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #FFD700;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        /* Sidebar Navigation */
+        .menu-bar {
+            background-color: rgba(0, 0, 0, 0.8);
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .menu-bar a {
+            color: #ffffff;
+            margin: 15px 0;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .menu-bar a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+            transform: scale(1.1);
+        }
+
+        /* Form Container */
+        .form-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            max-width: 750px;
+            margin: 80px auto;
+        }
+
+        @media (max-width: 768px) {
+            .menu-bar {
+                width: 200px;
+            }
+
+            .form-container {
+                margin: 20px;
+            }
+        }
+
+        /* Button Styles */
+        .btn-block {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Premier ChitFund Management System
+    </div>
+    
+    <!-- Sidebar Menu -->
+    <div class="menu-bar">
+        <a href="createGroup.html">Create Chit Group</a>
+        <a href="registerMember.html">Register Member</a>
+        <a href="auction.html">Auction Menu</a>
+        <a href="groupDetails.jsp">Available Chit Plans</a>
+        <a href="onGoingChitPlans.html">On Going Chit Plans</a>
+        <a href="whyUs.html">Why Us?</a>
+        <a href="contactUs.html">Contact Us</a>
+        <a href="logout.jsp">Logout</a>
+    </div>
+
+    <!-- Group Creation Form -->
+    <div class="form-container">
+        <h1 class="text-center mb-4">Create Group</h1>
+        <form id="groupForm" action="CreateGroupServlet" method="post">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="groupName">Group Name:</label>
+                    <input type="text" class="form-control" id="groupName" name="groupName" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="groupAmount">Amount per Member:</label>
+                    <input type="number" class="form-control" id="groupAmount" name="groupAmount" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="contributionFrequency">Contribution Frequency:</label>
+                    <select class="form-control" id="contributionFrequency" name="contributionFrequency" required>
+                        <option value="monthly">Monthly</option>
+                        <option value="bi-weekly">Bi-weekly</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="startMonth">Start Month:</label>
+                    <input type="month" class="form-control" id="startMonth" name="startMonth" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="endMonth">End Month:</label>
+                    <input type="month" class="form-control" id="endMonth" name="endMonth" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="interestPenalty">Interest/Penalty on late payment:</label>
+                    <input type="number" class="form-control" id="interestPenalty" name="interestPenalty" step="0.01">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="prizeMethod">Prize Distribution Method:</label>
+                    <select class="form-control" id="prizeMethod" name="prizeMethod" required>
+                        <option value="lottery">Lottery</option>
+                        <option value="rotating">Rotating</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="securityDeposit">Security Deposit (Optional):</label>
+                    <input type="number" class="form-control" id="securityDeposit" name="securityDeposit" step="0.01">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description (Optional):</label>
+                <textarea class="form-control" id="description" name="description"></textarea>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="termsAndConditions" name="termsAndConditions" required>
+                <label class="form-check-label" for="termsAndConditions">I agree to the terms and conditions</label>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Create Group</button>
+            <div class="text-center mt-3">
+                <a href="dashboard.jsp" class="btn btn-secondary btn-block">Back to Home</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
